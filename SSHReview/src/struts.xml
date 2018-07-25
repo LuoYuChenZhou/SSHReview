@@ -27,7 +27,7 @@
 	
 	<package name="userJsonPackage" extends="json-default" namespace="/userJson">
 		<action name="*_ajax" method="{1}" class="com.lycz.action.UserAction">
-			<result type="json">  
+			<result type="json" name="complete">  
                 <param name="excludeNullProperties">true</param>  
                 <param name="root">jsonStr</param>
             </result> 

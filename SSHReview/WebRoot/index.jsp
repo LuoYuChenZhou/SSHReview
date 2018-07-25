@@ -37,10 +37,10 @@
 			},
 			function(data) {
 				let resultJSONData = JSON.parse(data);
-				if (data.status === 200) {
+				if (resultJSONData.status === 200) {
 					window.location.href = "view/userList.jsp";
 				} else {
-					alert(data.msg);
+					alert(resultJSONData.msg); 
 				}
 			});
 

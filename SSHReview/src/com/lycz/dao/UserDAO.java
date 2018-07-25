@@ -78,7 +78,7 @@ public class UserDAO {
 	public User findById(java.lang.String id) {
 		log.debug("getting User instance with id: " + id);
 		try {
-			User instance = (User) getCurrentSession().get("com.lycz.dao.User", id);
+			User instance = (User) getCurrentSession().get("com.lycz.entity.User", id);
 			return instance;
 		} catch (RuntimeException re) {
 			log.error("get failed", re);
@@ -89,7 +89,7 @@ public class UserDAO {
 	public List findByExample(User instance) {
 		log.debug("finding User instance by example");
 		try {
-			List results = getCurrentSession().createCriteria("com.lycz.dao.User").add(Example.create(instance)).list();
+			List results = getCurrentSession().createCriteria("com.lycz.entity.User").add(Example.create(instance)).list();
 			log.debug("find by example successful, result size: " + results.size());
 			return results;
 		} catch (RuntimeException re) {
