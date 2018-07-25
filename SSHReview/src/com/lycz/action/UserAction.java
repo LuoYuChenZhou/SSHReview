@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import com.lycz.dao.UserDAO;
 import com.lycz.design.CommonResult;
+import com.lycz.design.Page;
 import com.lycz.design.ToolUtil;
 import com.lycz.entity.User;
 import com.opensymphony.xwork2.ActionSupport;
@@ -73,6 +74,14 @@ public class UserAction extends ActionSupport implements ModelDriven<User> {
 
 		jsonStr = JSONObject.fromObject(commonResult).toString();
 
+		return "complete";
+	}
+
+	public String getUserListByName() {
+		curPage = curPage > 0 ? curPage : 1;
+		pageSize = pageSize > 0 ? pageSize : 10;
+		Page<User> page = userDao.getUserListByName(searchName, curPage, pageSize);
+		jsonStr = JSONObject.fromObject(page).toString();
 		return "complete";
 	}
 }

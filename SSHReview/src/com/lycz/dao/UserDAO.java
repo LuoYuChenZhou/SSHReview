@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lycz.design.Page;
 import com.lycz.entity.User;
 
 /**
@@ -30,7 +31,7 @@ import com.lycz.entity.User;
  * @author MyEclipse Persistence Tools
  */
 @Repository
-@Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class UserDAO {
 	private static final Logger log = LoggerFactory.getLogger(UserDAO.class);
 	// property constants
@@ -51,6 +52,25 @@ public class UserDAO {
 
 	protected void initDao() {
 		// do nothing
+	}
+
+	public Page<User> getUserListByName(String searchName, int curPage, int pageSize) {
+
+		String hql = "select new Map(name as name,sex as sex,id as id) from User where name like :name order by name";
+		Query query = getCurrentSession().createQuery(hql);
+		query.setParameter("name", "%" + searchName + "%");
+		query.setFirstResult((curPage - 1) * pageSize);
+		query.setMaxResults(pageSize);
+		List<User> userList = query.list();
+
+		hql = "select count(*) from User where name like :name";
+		Query query1 = getCurrentSession().createQuery(hql);
+		query1.setParameter("name", "%" + searchName + "%");
+		long count = (long) query1.uniqueResult();
+
+		Page<User> page = new Page<User>(curPage, pageSize, userList, count);
+		return page;
+
 	}
 
 	public void save(User transientInstance) {
