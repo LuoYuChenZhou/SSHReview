@@ -73,25 +73,37 @@ public class UserDAO {
 
 	}
 
-	public void save(User transientInstance) {
+	public boolean save(User transientInstance) {
 		log.debug("saving User instance");
 		try {
 			getCurrentSession().save(transientInstance);
 			log.debug("save successful");
+			return true;
 		} catch (RuntimeException re) {
 			log.error("save failed", re);
-			throw re;
+			return false;
 		}
 	}
 
-	public void delete(User persistentInstance) {
+	public boolean update(User user) {
+		try {
+			getCurrentSession().update(user);
+			return true;
+		} catch (RuntimeException re) {
+			log.error(re.getMessage());
+			return false;
+		}
+	}
+
+	public boolean delete(User persistentInstance) {
 		log.debug("deleting User instance");
 		try {
 			getCurrentSession().delete(persistentInstance);
 			log.debug("delete successful");
+			return true;
 		} catch (RuntimeException re) {
 			log.error("delete failed", re);
-			throw re;
+			return false;
 		}
 	}
 

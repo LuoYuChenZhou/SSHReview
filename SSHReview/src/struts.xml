@@ -24,13 +24,23 @@
 	<constant name="struts.tag.altSyntax" value="true" />
 	<!-- 对于WebLogic,Orion,OC4J此属性应该设置成true -->
 	<constant name="struts.dispatcher.parametersWorkaround" value="false" />
-	
-	<package name="userJsonPackage" extends="json-default" namespace="/userJson">
+
+	<package name="userNormalPackage" extends="struts-default"
+		namespace="/userNormal">
+		<action name="*_user" method="{1}" class="com.lycz.action.UserAction">
+			<!-- 路径使用el表达式代替满足适配不同方法不同路径的目的，会报错但能运行 -->
+			<result type="dispatcher" name="success">${targetUrl}</result>
+			<result type="dispatcher" name="error">/view/error.jsp</result>
+		</action>
+	</package>
+
+	<package name="userJsonPackage" extends="json-default"
+		namespace="/userJson">
 		<action name="*_ajax" method="{1}" class="com.lycz.action.UserAction">
-			<result type="json" name="complete">  
-                <param name="excludeNullProperties">true</param>  
-                <param name="root">jsonStr</param>
-            </result> 
+			<result type="json" name="complete">
+				<param name="excludeNullProperties">true</param>
+				<param name="root">jsonStr</param>
+			</result>
 		</action>
 	</package>
 

@@ -1,6 +1,9 @@
 package com.lycz.action;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.ServletActionContext;
 
 import com.lycz.dao.UserDAO;
 import com.lycz.design.CommonResult;
@@ -19,6 +22,7 @@ public class UserAction extends ActionSupport implements ModelDriven<User> {
 	private int curPage;
 	private int pageSize;
 	private String jsonStr;
+	private String targetUrl;
 
 	@Resource
 	private UserDAO userDao;
@@ -60,6 +64,14 @@ public class UserAction extends ActionSupport implements ModelDriven<User> {
 		this.jsonStr = jsonStr;
 	}
 
+	public String getTargetUrl() {
+		return targetUrl;
+	}
+
+	public void setTargetUrl(String targetUrl) {
+		this.targetUrl = targetUrl;
+	}
+
 	public String login() {
 		CommonResult<String> commonResult = new CommonResult<String>();
 		commonResult.setData("");
@@ -83,5 +95,45 @@ public class UserAction extends ActionSupport implements ModelDriven<User> {
 		Page<User> page = userDao.getUserListByName(searchName, curPage, pageSize);
 		jsonStr = JSONObject.fromObject(page).toString();
 		return "complete";
+	}
+
+	public String deleteUser() {
+
+		CommonResult<String> commonResult = new CommonResult<String>();
+		commonResult.setData("");
+
+		if (userDao.delete(user)) {
+			commonResult.setMsg("删除成功");
+			commonResult.setStatus(201);
+		} else {
+			commonResult.setMsg("删除失败");
+			commonResult.setStatus(500);
+		}
+
+		jsonStr = JSONObject.fromObject(commonResult).toString();
+		return "complete";
+	}
+
+	public String getUserInfoById() {
+
+		User userInfo = userDao.findById(user.getId());
+		if (ToolUtil.isEmpty(userInfo)) {
+			return ERROR;
+		}
+
+		HttpServletRequest request = ServletActionContext.getRequest();
+		request.setAttribute("userInfo", userInfo);
+		targetUrl ="/view/userEdit.jsp";
+		return SUCCESS;
+	}
+
+	public String updateUser() {
+		targetUrl ="/view/userList.jsp";
+		return userDao.update(user) ? SUCCESS : ERROR;
+	}
+	
+	public String addUser() {
+		targetUrl ="/view/userList.jsp";
+		return userDao.save(user) ? SUCCESS : ERROR;
 	}
 }

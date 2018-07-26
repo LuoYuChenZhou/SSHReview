@@ -71,7 +71,7 @@ td {
 	}
 
 	function getUserListByName() {
-		$.post("/SSHReview/userJson/getUserListByName_ajax.do",
+		$.get("/SSHReview/userJson/getUserListByName_ajax.do",
 			{
 				searchName : $("#searchName").val(),
 				curPage : curPage,
@@ -99,20 +99,32 @@ td {
 
 	function listToTable(list) {
 		let htmlStr = "";
-		console.log(list);
 		for (let i = 0; i < list.length; i++) {
 			htmlStr = htmlStr + "<tr><td>" + list[i].name + "</td><td>" + getSex(list[i].sex) + "</td><td>" +
-				"<a href='javascript:void(0)' onclick='deleteUser(" + list[i].id + ")'>删</a>" +
-				"<a href='javascript:void(0)' onclick='updateUser(" + list[i].id + ")'>改</a>" +
+				"<a href='javascript:void(0)' onclick='deleteUser(\"" + list[i].id + "\")'>删</a>" +
+				" | " +
+				"<a href='javascript:void(0)' onclick='updateUser(\"" + list[i].id + "\")'>改</a>" +
 				"</td></tr>";
 		}
 		return htmlStr;
 	}
 	function addUser() {
+		window.location.href = "view/userAdd.jsp";
 	}
 	function deleteUser(id) {
+		$.get("/SSHReview/userJson/deleteUser_ajax.do",
+			{
+				id : id
+			},
+			function(data) {
+				let resultJSONData = JSON.parse(data);
+				alert(resultJSONData.msg);
+				getUserListByName();
+			});
+
 	}
 	function updateUser(id) {
+		window.location.href = "/SSHReview/userNormal/getUserInfoById_user.do?id=" + id;
 	}
 	function toLeft() {
 		if (leftBtnOk) {
