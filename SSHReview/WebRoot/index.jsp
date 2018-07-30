@@ -40,10 +40,11 @@
 				if (resultJSONData.status === 200) {
 					window.location.href = "view/userList.jsp";
 				} else {
-					alert(resultJSONData.msg); 
+					alert(resultJSONData.msg);
 				}
 			});
 
 	}
+
 </script>
 </html>

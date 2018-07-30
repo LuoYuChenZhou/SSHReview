@@ -8,10 +8,14 @@ import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Example;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,6 +75,12 @@ public class UserDAO {
 		Page<User> page = new Page<User>(curPage, pageSize, userList, count);
 		return page;
 
+	}
+
+	public String getBiggestNumId() {
+		String sql = "select id from User where id REGEXP '^[0-9]+$' order by (id+0) desc limit 1 ";
+		Query query = getCurrentSession().createSQLQuery(sql);
+		return (String) query.uniqueResult();
 	}
 
 	public boolean save(User transientInstance) {

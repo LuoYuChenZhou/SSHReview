@@ -39,6 +39,7 @@ td {
 	<input type="text" id="searchName">
 	<button onclick="getUserListByName()">查询</button>
 	<button onclick="addUser()">添加</button>
+	<button onclick="batchInsert()">批量添加</button>
 	<hr>
 	<table id="userTable">
 		<tr>
@@ -48,6 +49,7 @@ td {
 		</tr>
 	</table>
 	<hr>
+	<span id="showPage"></span>
 	<label for="pageSize">每页条数</label>
 	<select id="pageSize" onchange="getUserListByName()">
 		<option value="5" selected="selected">5条</option>
@@ -70,6 +72,10 @@ td {
 		getUserListByName();
 	}
 
+	function batchInsert() {
+		window.location.href = "/SSHReview/userNormal/batchInsert_user.do";
+	}
+
 	function getUserListByName() {
 		$.get("/SSHReview/userJson/getUserListByName_ajax.do",
 			{
@@ -84,6 +90,7 @@ td {
 					let htmlStr = listToTable(resultJSONData.data);
 					userTable.append(htmlStr);
 					controlButton(resultJSONData.hasPrePage, resultJSONData.hasNextPage);
+					$("#showPage").text("共" + resultJSONData.count + "条，共" + resultJSONData.totalPage + "页，当前页数：" + resultJSONData.curPage);
 				} else if (resultJSONData.status === 204) {
 					clearTable();
 				} else {

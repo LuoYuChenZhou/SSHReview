@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.lycz.dao.UserDAO;
 import com.lycz.design.CommonResult;
@@ -26,6 +27,8 @@ public class UserAction extends ActionSupport implements ModelDriven<User> {
 
 	@Resource
 	private UserDAO userDao;
+	@Resource
+	private JdbcTemplate jdbcTemplate;
 
 	@Override
 	public User getModel() {
@@ -123,17 +126,37 @@ public class UserAction extends ActionSupport implements ModelDriven<User> {
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 		request.setAttribute("userInfo", userInfo);
-		targetUrl ="/view/userEdit.jsp";
+		targetUrl = "/view/userEdit.jsp";
 		return SUCCESS;
 	}
 
 	public String updateUser() {
-		targetUrl ="/view/userList.jsp";
+		targetUrl = "/view/userList.jsp";
 		return userDao.update(user) ? SUCCESS : ERROR;
 	}
-	
+
 	public String addUser() {
-		targetUrl ="/view/userList.jsp";
+		targetUrl = "/view/userList.jsp";
 		return userDao.save(user) ? SUCCESS : ERROR;
+	}
+
+	public String batchInsert() {
+		String oldIdString = userDao.getBiggestNumId();
+		int newId = ToolUtil.isEmpty(oldIdString) ? 0 : Integer.parseInt(oldIdString) + 1;
+
+		StringBuffer sql = new StringBuffer("insert into user values");
+		long begin = System.currentTimeMillis();
+		// 由于mysql的max_allowed_packet参数设置失败，太大的数据放不进去
+		for (int i = newId; i < 10000 + newId; i++) {
+			if (i != newId) {
+				sql.append(",");
+			}
+			sql.append("('" + i + "','name_" + i + "','" + i % 2 + "','pwd_" + i + "')");
+		}
+		jdbcTemplate.execute(sql.toString());
+		long end = System.currentTimeMillis();
+		System.out.println(end - begin);
+		targetUrl = "/view/userList.jsp";
+		return SUCCESS;
 	}
 }
